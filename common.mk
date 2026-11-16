@@ -13,10 +13,21 @@ LOCAL_PATH := device/oneplus/sm8350-common
 TARGET_BOARD_PLATFORM := lahaina
 TARGET_KERNEL_VERSION := 5.4
 TARGET_PROVIDES_POWERHAL := true
-TARGET_COMMON_QTI_COMPONENTS := adreno alarm av bt display gps init media overlay perf telephony usb wlan
+# TODO(porsche): the A17 common tree owns the complete HAL/blob packages and
+# configurations. Calcite component bundles would install competing providers.
+# AOSPA's common board/product configuration is still inherited by aospa-target.mk.
+TARGET_COMMON_QTI_COMPONENTS :=
 
 # Device-specific fstab modules can preserve bootloader and userdata behaviour.
 SM8350_FSTAB_MODULE ?= fstab.default
+
+# Use the compiled perf client matching the booting A17 reference HAL.
+# The A17 shared vendor tree owns the daemon and configuration.
+PRODUCT_SOONG_NAMESPACES += hardware/qcom-caf/common/libqti-perfd-client
+PRODUCT_PACKAGES += libqti-perfd-client
+
+# Preserve manifest fragments inherited from hardware/dolby below.
+DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/vintf/manifest.xml
 
 # A/B
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
@@ -294,7 +305,7 @@ PRODUCT_SOONG_NAMESPACES += \
     hardware/lineage/interfaces/power-libperfmgr \
     hardware/oplus \
     hardware/pixelworks/interfaces \
-    vendor/qcom/common/vendor/perf
+    hardware/qcom-caf/common/libqti-perfd-client
 
 # Storage
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
@@ -357,7 +368,7 @@ PRODUCT_COPY_FILES += \
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
     hardware/oplus/vintf/device_framework_matrix.xml
 # Calcite supplies QTI compatibility matrices from device/qcom/common.
-DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/vintf/manifest.xml
+# Manifest base is initialized before inheriting hardware/dolby.
 ODM_MANIFEST_FILES := $(LOCAL_PATH)/vintf/manifest_odm.xml
 
 # WiFi
@@ -389,7 +400,12 @@ $(call inherit-product, vendor/oneplus/sm8350-common/sm8350-common-vendor.mk)
 
 # Reference checkouts are preserved on disk, outside the active build graph.
 PRODUCT_SOURCE_ROOT_DIRS += \
+    -hardware/qcom-caf/common \
+    hardware/qcom-caf/common/libqti-perfd-client \
     -device/realme/porsche-a17-ref \
+    -device/realme/porsche/DolbyManager \
+    -device/realme/porsche/sensors \
+    -device/realme/porsche/aidl/vibrator \
     -hardware/oplus-a14-ref \
     -kernel/msm-5.4 \
     -vendor/realme-a14-ref \
@@ -399,3 +415,7 @@ PRODUCT_SOURCE_ROOT_DIRS += \
     -vendor/nxp/opensource/hidlimpl-a14-ref \
     -hardware/lineage/interfaces/health
 # TODO(porsche): AOSPA owns the equivalent Lineage health interface/service.
+# TODO(porsche): import only the A17 compiled perf client from CAF common;
+# AOSPA already provides the remaining QCOM modules, firmware mounts and RFS links.
+# TODO(porsche): preserve the uvite Dolby/sensor/vibrator sources for reference;
+# active implementations come from the booting A17 hardware/dolby and hardware/oplus.

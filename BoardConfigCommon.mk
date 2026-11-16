@@ -5,6 +5,7 @@
 #
 
 COMMON_PATH := device/oneplus/sm8350-common
+TARGET_BOARD_KERNEL_HEADERS += $(COMMON_PATH)/kernel-headers
 
 # A/B
 AB_OTA_UPDATER := true
@@ -88,10 +89,13 @@ BOARD_KERNEL_SEPARATED_DTBO := true
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_RAMDISK_USE_LZ4 := true
 TARGET_KERNEL_CLANG_VERSION := r563880c
+# Calcite's kernel scripts use KERNEL_CLANG_VERSION, not the Lineage variable.
+KERNEL_CLANG_VERSION := $(TARGET_KERNEL_CLANG_VERSION)
 TARGET_KERNEL_SOURCE := kernel/oneplus/sm8350
 TARGET_KERNEL_CONFIG := vendor/lahaina-qgki_defconfig
 # AOSPA kernel scripts consume KERNEL_DEFCONFIG.
 KERNEL_DEFCONFIG := $(TARGET_KERNEL_CONFIG)
+KERNEL_MODULES_INSTALL := vendor_dlkm
 
 # Kernel modules
 BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE := $(COMMON_PATH)/modules.blocklist
@@ -186,7 +190,7 @@ BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION := 1
 # WiFi
 BOARD_WLAN_DEVICE := qcwcn
 BOARD_HOSTAPD_DRIVER := NL80211
-BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
+BOARD_HOSTAPD_PRIVATE_LIB := //hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib:lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 BOARD_WPA_SUPPLICANT_DRIVER := $(BOARD_HOSTAPD_DRIVER)
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := $(BOARD_HOSTAPD_PRIVATE_LIB)
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB_EVENT := "ON"
@@ -197,7 +201,8 @@ WIFI_FEATURE_HOSTAPD_11AX := true
 WIFI_HIDL_FEATURE_AWARE := true
 WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
-WPA_SUPPLICANT_VERSION := VER_0_8_X
+# Calcite builds wpa_supplicant with Soong; enabling VER_0_8_X also
+# enables the obsolete duplicate Android.mk driver library.
 
 # Include the proprietary files BoardConfig.
 include vendor/oneplus/sm8350-common/BoardConfigVendor.mk

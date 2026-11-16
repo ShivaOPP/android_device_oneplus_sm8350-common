@@ -6,6 +6,26 @@
 soong_namespace {
 }
 
+license {
+    name: "sm8350_kernel_uapi_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["SPDX-license-identifier-GPL-2.0"],
+    license_text: ["kernel-headers.LICENSE"],
+}
+
+// Export the UAPI installed from the exact A17 kernel, not an empty header alias.
+kernel_headers {
+    name: "generated_kernel_headers",
+    licenses: ["sm8350_kernel_uapi_license"],
+    vendor_available: true,
+    recovery_available: true,
+    export_system_include_dirs: [
+        "kernel-headers/audio",
+        "kernel-headers/camera",
+        "kernel-headers/display",
+    ],
+}
+
 install_symlink {
     name: "firmware_wlanmdsp.otaupdate_symlink",
     vendor: true,
