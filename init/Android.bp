@@ -12,6 +12,10 @@ cc_library_static {
 
 prebuilt_etc {
     name: "fstab.default",
+    // TODO(porsche): calcite fs_mgr searches fstab.<boot hardware>. The verified
+    // kernel cmdline sets androidboot.hardware=qcom; keep the A17 fstab contents
+    // and install a name discoverable without assuming a bootloader suffix.
+    filename: "fstab.qcom",
     src: "fstab.default",
     vendor: true,
     vendor_ramdisk_available: true,
