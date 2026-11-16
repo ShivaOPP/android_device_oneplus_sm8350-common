@@ -1,8 +1,13 @@
-#!/usr/bin/env -S PYTHONPATH=../../../tools/extract-utils python3
+#!/usr/bin/env python3
 #
 # SPDX-FileCopyrightText: 2024 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'tools/extract-utils'))
 
 from extract_utils.fixups_blob import (
     blob_fixup,
@@ -21,12 +26,9 @@ namespace_imports = [
     'device/oneplus/sm8350-common',
     'hardware/oplus',
     'hardware/pixelworks/interfaces',
-    'hardware/qcom-caf/sm8350',
-    'hardware/qcom-caf/wlan',
     'vendor/qcom/opensource/commonsys-intf/display',
     'vendor/qcom/opensource/commonsys/display',
     'vendor/qcom/opensource/dataservices',
-    'vendor/qcom/opensource/display',
 ]
 
 

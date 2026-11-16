@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+type hal_lineage_livedisplay_service, hal_service_type, service_manager_type;
+type hal_lineage_powershare_service, hal_service_type, service_manager_type;
+type hal_lineage_touch_service, hal_service_type, service_manager_type;

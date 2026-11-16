@@ -4,8 +4,19 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Common path is explicit: inherit-product does not preserve caller LOCAL_PATH.
+LOCAL_PATH := device/oneplus/sm8350-common
+
 # Add common definitions for Qualcomm
-$(call inherit-product, hardware/qcom-caf/common/common.mk)
+# AOSPA inherits device/qcom/common/common.mk from aospa-target.mk.
+# TODO(porsche): keep QTI component ownership with calcite, not CAF product hooks.
+TARGET_BOARD_PLATFORM := lahaina
+TARGET_KERNEL_VERSION := 5.4
+TARGET_PROVIDES_POWERHAL := true
+TARGET_COMMON_QTI_COMPONENTS := adreno alarm av bt display gps init media overlay perf telephony usb wlan
+
+# Device-specific fstab modules can preserve bootloader and userdata behaviour.
+SM8350_FSTAB_MODULE ?= fstab.default
 
 # A/B
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
@@ -54,7 +65,7 @@ PRODUCT_PACKAGES += \
     libvolumelistener \
     sound_trigger.primary.lahaina:32
 
-AUDIO_HAL_DIR := hardware/qcom-caf/sm8350/audio
+AUDIO_HAL_DIR := vendor/qcom/opensource/audio-hal/primary-hal
 QCV_FAMILY_SKUS := lahaina yupik
 
 PRODUCT_COPY_FILES += \
@@ -139,7 +150,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.fingerprint.xml
 
+# Calcite CompositionEngine selects the extension via surfaceflinger.udfps_lib.
+# Retain the AOSPA export as well for its board/vendor integration.
 $(call soong_config_set,surfaceflinger,udfps_lib,//hardware/oplus:libudfps_extension.oplus)
+TARGET_SURFACEFLINGER_UDFPS_LIB := //hardware/oplus:libudfps_extension.oplus
 
 # GPS
 PRODUCT_COPY_FILES += \
@@ -175,8 +189,8 @@ PRODUCT_PACKAGES += \
 
 # Init
 PRODUCT_PACKAGES += \
-    fstab.default \
-    fstab.default.vendor_ramdisk \
+    $(SM8350_FSTAB_MODULE) \
+    $(SM8350_FSTAB_MODULE).vendor_ramdisk \
     init.class_main.sh \
     init.oplus.hw.rc \
     init.oplus.hw.recovery.rc \
@@ -192,7 +206,7 @@ PRODUCT_PACKAGES += \
     ueventd.oplus.rc \
     ueventd.qcom.rc
 
-$(call soong_config_set,libinit,vendor_init_lib,//$(LOCAL_PATH):libinit_oplus)
+# Per-device vendor init is selected by TARGET_INIT_VENDOR_LIB on AOSPA.
 
 # Lineage Health
 PRODUCT_PACKAGES += \
@@ -276,38 +290,16 @@ PRODUCT_SHIPPING_API_LEVEL := $(BOARD_SHIPPING_API_LEVEL)
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
     hardware/google/interfaces \
-    hardware/google/pixel \
-    hardware/google/pixel/pixelstats \
     hardware/google/pixel/power-libperfmgr \
     hardware/lineage/interfaces/power-libperfmgr \
     hardware/oplus \
     hardware/pixelworks/interfaces \
-    hardware/qcom-caf/common/libqti-perfd-client
+    vendor/qcom/common/vendor/perf
 
 # Storage
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 
-# Telephony
-PRODUCT_PACKAGES += \
-    extphonelib \
-    extphonelib-product \
-    extphonelib.xml \
-    extphonelib_product.xml \
-    ims-ext-common \
-    ims_ext_common.xml \
-    qti-telephony-hidl-wrapper \
-    qti-telephony-hidl-wrapper-prd \
-    qti_telephony_hidl_wrapper.xml \
-    qti_telephony_hidl_wrapper_prd.xml \
-    qti-telephony-utils \
-    qti-telephony-utils-prd \
-    qti_telephony_utils.xml \
-    qti_telephony_utils_prd.xml \
-    telephony-ext
-
-PRODUCT_BOOT_JARS += \
-    telephony-ext
-
+# Telephony packages and boot jars are inherited from AOSPA.
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
@@ -363,9 +355,8 @@ PRODUCT_COPY_FILES += \
 
 # VINTF
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
-    hardware/oplus/vintf/device_framework_matrix.xml \
-    hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml
-DEVICE_MATRIX_FILE := hardware/qcom-caf/common/compatibility_matrix.xml
+    hardware/oplus/vintf/device_framework_matrix.xml
+# Calcite supplies QTI compatibility matrices from device/qcom/common.
 DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/vintf/manifest.xml
 ODM_MANIFEST_FILES := $(LOCAL_PATH)/vintf/manifest_odm.xml
 
@@ -395,3 +386,16 @@ PRODUCT_PACKAGES += \
 
 # Inherit from the proprietary files makefile.
 $(call inherit-product, vendor/oneplus/sm8350-common/sm8350-common-vendor.mk)
+
+# Reference checkouts are preserved on disk, outside the active build graph.
+PRODUCT_SOURCE_ROOT_DIRS += \
+    -device/realme/porsche-a17-ref \
+    -hardware/oplus-a14-ref \
+    -kernel/msm-5.4 \
+    -vendor/realme-a14-ref \
+    -vendor/realme-a17-ref \
+    -vendor/oplus/camera-a14-ref \
+    -vendor/nxp/opensource/halimpl-a14-ref \
+    -vendor/nxp/opensource/hidlimpl-a14-ref \
+    -hardware/lineage/interfaces/health
+# TODO(porsche): AOSPA owns the equivalent Lineage health interface/service.

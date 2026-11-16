@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# AOSPA already defines hal_lineage_health; retain only the other Oplus HALs.
+hal_attribute(lineage_livedisplay)
+hal_attribute(lineage_touch)
+hal_attribute(lineage_powershare)

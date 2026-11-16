@@ -1009,9 +1009,6 @@ odm/firmware/tp/21075/LIMIT_NF_ILI7807S_DSJM.img
 odm/firmware/tp/21147/FW_FT3658U_SAMSUNG.img
 odm/firmware/tp/21147/FW_FT3658U_SAMSUNG_FAE.img
 odm/firmware/tp/21147/LIMIT_FT3658U_SAMSUNG.img
-odm/firmware/tp/21617/FW_FT3658U_SAMSUNG.img
-odm/firmware/tp/21617/FW_FT3658U_SAMSUNG_FAE.img
-odm/firmware/tp/21617/LIMIT_FT3658U_SAMSUNG.img
 
 # Trusted Execution Environment connector
 vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
