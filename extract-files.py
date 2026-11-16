@@ -39,8 +39,6 @@ lib_fixups: lib_fixups_user_type = {
         'com.qualcomm.qti.dpm.api@1.0',
         'libmmosal',
         'vendor.qti.diaghal@1.0',
-        # AOSPA has a system_ext FM interface; keep the vendor prebuilt distinct.
-        'vendor.qti.hardware.fm@1.0',
         'vendor.qti.hardware.wifidisplaysession@1.0',
         'vendor.qti.imsrtpservice@3.0',
     ): lib_fixup_vendor_suffix,
