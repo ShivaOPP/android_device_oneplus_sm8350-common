@@ -23,7 +23,9 @@ SM8350_FSTAB_MODULE ?= fstab.default
 
 # Use the compiled perf client matching the booting A17 reference HAL.
 # The A17 shared vendor tree owns the daemon and configuration.
-PRODUCT_SOONG_NAMESPACES += hardware/qcom-caf/common/libqti-perfd-client
+PRODUCT_SOONG_NAMESPACES += \
+    hardware/qcom-caf/common/libqti-perfd-client \
+    device/qcom/common/vendor/telephony
 PRODUCT_PACKAGES += libqti-perfd-client
 
 # Preserve manifest fragments inherited from hardware/dolby below.
