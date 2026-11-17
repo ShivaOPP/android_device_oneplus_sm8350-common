@@ -328,6 +328,11 @@ PRODUCT_SOONG_NAMESPACES += \
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 
 # Telephony packages and boot jars are inherited from AOSPA.
+# Preserve the primary CAF hook for SM8350's legacy rmnet_data API. Calcite's
+# qti-telephony bundle normally supplies this; our A17 vendor owns its packages.
+# netmgrd imports these real functions and the selected kernel exports the UAPI.
+$(call soong_config_set_bool,rmnetctl,old_rmnet_data,true)
+
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
