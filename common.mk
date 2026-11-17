@@ -51,6 +51,11 @@ PRODUCT_PACKAGES += \
     otapreopt_script
 
 # Audio
+# Match the existing board audio flag in calcite's Soong-built tinycompress.
+# Normally supplied by qti-audio.mk; its package bundle is intentionally not
+# inherited because the primary A17 common/vendor trees own those packages.
+$(call soong_config_set_bool,tinycompress,enable_extended_compress_format,true)
+
 PRODUCT_PACKAGES += \
     android.hardware.audio@6.0-impl \
     android.hardware.audio.effect@6.0-impl \
