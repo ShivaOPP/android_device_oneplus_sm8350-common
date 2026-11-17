@@ -144,6 +144,10 @@ TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
 # Recovery
+# The actual SM8350 kernel enables CONFIG_SCSI_UFS_BSG and exports
+# scsi/scsi_bsg_ufs.h. Use CLO's matching BSG backend, not private legacy headers.
+$(call soong_config_set,ufsbsg,ufsframework,bsg)
+
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
 TARGET_RECOVERY_FSTAB := $(COMMON_PATH)/init/fstab.default
