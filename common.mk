@@ -419,6 +419,7 @@ PRODUCT_SOURCE_ROOT_DIRS += \
     -device/realme/porsche/sensors \
     -device/realme/porsche/aidl/vibrator \
     -hardware/oplus-a14-ref \
+    -hardware/oplus-penguin \
     -kernel/msm-5.4 \
     -vendor/realme-a14-ref \
     -vendor/realme-a17-ref \
