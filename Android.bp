@@ -14,16 +14,31 @@ license {
 }
 
 // Export the UAPI installed from the exact A17 kernel, not an empty header alias.
-kernel_headers {
+cc_library_headers {
     name: "generated_kernel_headers",
     licenses: ["sm8350_kernel_uapi_license"],
     vendor_available: true,
     recovery_available: true,
-    export_system_include_dirs: [
-        "kernel-headers/audio",
-        "kernel-headers/camera",
-        "kernel-headers/display",
-    ],
+    arch: {
+        arm: {
+            export_system_include_dirs: [
+                "kernel-headers/arm",
+                "uapi/kernel-headers",
+                "uapi/kernel-headers/audio",
+                "uapi/kernel-headers/camera",
+                "uapi/kernel-headers/display",
+            ],
+        },
+        arm64: {
+            export_system_include_dirs: [
+                "kernel-headers/arm64",
+                "uapi/kernel-headers",
+                "uapi/kernel-headers/audio",
+                "uapi/kernel-headers/camera",
+                "uapi/kernel-headers/display",
+            ],
+        },
+    },
 }
 
 install_symlink {

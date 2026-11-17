@@ -5,7 +5,9 @@
 #
 
 COMMON_PATH := device/oneplus/sm8350-common
-TARGET_BOARD_KERNEL_HEADERS += $(COMMON_PATH)/kernel-headers
+# Only the Bionic-clean shared UAPI goes into the global kernel_headers module.
+# Architecture-specific headers are exported by our cc_library_headers module.
+TARGET_BOARD_KERNEL_HEADERS += $(COMMON_PATH)/uapi/kernel-headers
 
 # A/B
 AB_OTA_UPDATER := true
@@ -57,6 +59,12 @@ TARGET_BOOTLOADER_BOARD_NAME := lahaina
 
 # Display
 TARGET_GRALLOC_HANDLE_HAS_RESERVED_SIZE := true
+# TODO(porsche): the A17 reference's CAF board hooks and calcite's display
+# product both enable these selectors. Keep them when selecting HAL packages
+# ourselves, without inheriting a second QTI component bundle.
+$(call soong_config_set_bool,qtidisplay,default,true)
+$(call soong_config_set_bool,qtidisplay,drmpp,true)
+$(call soong_config_set_bool,qtidisplay,gralloc4,true)
 
 # Properties
 TARGET_ODM_PROP += $(COMMON_PATH)/odm.prop
